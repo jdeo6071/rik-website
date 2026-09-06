@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RiK's Joke Generator — Laugh Break!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f9f9 0%, #e8f8f5 100%);
+            color: #1a5f5f;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        a {
+            color: #00b8a9;
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity .2s;
+        }
+
+        a:hover {
+            opacity: .7;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            border: 3px solid #00b8a9;
+            box-shadow: 0 10px 40px rgba(0, 184, 169, 0.2);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #0d6e6e;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #00b8a9;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .joke-box {
+            background: linear-gradient(135deg, rgba(0, 184, 169, 0.08) 0%, rgba(168, 243, 239, 0.05) 100%);
+            border: 2px solid #00b8a9;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .joke-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #1a5f5f;
+            font-weight: 500;
+        }
+
+        .setup {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #0d6e6e;
+        }
+
+        .delivery {
+            font-size: 1.2rem;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed #00b8a9;
+            color: #00b8a9;
+            font-weight: 700;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 184, 169, 0.2);
+            border-top: 4px solid #00b8a9;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background: #00b8a9;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .3s;
+            border: 2px solid #00b8a9;
+        }
+
+        button:hover {
+            background: #008b7f;
+            border-color: #008b7f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 184, 169, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            border-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .secondary-btn {
+            background: transparent;
+            color: #00b8a9;
+            border: 2px solid #00b8a9;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(0, 184, 169, 0.1);
+            border-color: #008b7f;
+            color: #008b7f;
+        }
+
+        .error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 2px solid #ff6b6b;
+            color: #c92a2a;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .joke-type {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .type-btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            background: transparent;
+            color: #00b8a9;
+            border: 2px solid #00b8a9;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all .3s;
+        }
+
+        .type-btn:hover {
+            background: rgba(0, 184, 169, 0.1);
+        }
+
+        .type-btn.active {
+            background: #00b8a9;
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #00b8a9;
+            color: #1a5f5f;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: #00b8a9;
+        }
+
+        .emoji {
+            font-size: 1.5rem;
+            margin-right: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .joke-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="emoji">😄</span>RiK's Joke Generator</h1>
+            <p class="subtitle">Get a laugh break while streaming!</p>
+        </header>
+
+        <div class="joke-type">
+            <button class="type-btn active" data-type="any">Any Joke</button>
+            <button class="type-btn" data-type="general">General</button>
+            <button class="type-btn" data-type="programming">Programming</button>
+            <button class="type-btn" data-type="knock-knock">Knock-Knock</button>
+        </div>
+
+        <div class="joke-box">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 15px; color: #00b8a9;">Finding the perfect joke...</p>
+            </div>
+            <div class="joke-text" id="jokeText">
+                Click "Get a Joke" to start laughing! 🎉
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="jokeBtn" onclick="getJoke()">
+                <span class="emoji">🎲</span>Get a Joke
+            </button>
+            <button class="secondary-btn" onclick="copyJoke()">
+                <span class="emoji">📋</span>Copy
+            </button>
+            <button class="secondary-btn" onclick="shareJoke()">
+                <span class="emoji">🔗</span>Share
+            </button>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <footer>
+            <p>Powered by <a href="https://jokeapi.dev/" target="_blank">JokeAPI</a> 🚀</p>
+            <p>Back to <a href="index.html">RiK's Main Site</a></p>
+        </footer>
+    </div>
+
+    <script>
+        let currentJoke = "";
+        let selectedType = "any";
+
+        // Type selection
+        document.querySelectorAll('.type-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedType = this.dataset.type;
+            });
+        });
+
+        async function getJoke() {
+            const jokeBtn = document.getElementById('jokeBtn');
+            const loading = document.getElementById('loading');
+            const jokeText = document.getElementById('jokeText');
+            const error = document.getElementById('error');
+
+            // Reset
+            error.style.display = 'none';
+            jokeText.innerHTML = '';
+            loading.style.display = 'block';
+            jokeBtn.disabled = true;
+
+            try {
+                // JokeAPI endpoint
+                const endpoint = selectedType === 'any' 
+                    ? 'https://v2.jokeapi.dev/joke/Any'
+                    : `https://v2.jokeapi.dev/joke/${capitalizeType(selectedType)}`;
+
+                const response = await fetch(endpoint);
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch joke');
+                }
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error('Could not retrieve joke');
+                }
+
+                // Display joke
+                if (data.type === 'single') {
+                    currentJoke = data.joke;
+                    jokeText.innerHTML = `<div class="joke-text">${escapeHtml(data.joke)}</div>`;
+                } else if (data.type === 'twopart') {
+                    currentJoke = `${data.setup}\n\n${data.delivery}`;
+                    jokeText.innerHTML = `
+                        <div>
+                            <div class="setup">${escapeHtml(data.setup)}</div>
+                            <div class="delivery">${escapeHtml(data.delivery)}</div>
+                        </div>
+                    `;
+                }
+
+                loading.style.display = 'none';
+                jokeBtn.disabled = false;
+            } catch (err) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                error.textContent = `❌ ${err.message}. Please try again!`;
+                jokeBtn.disabled = false;
+            }
+        }
+
+        function capitalizeType(type) {
+            const types = {
+                'any': 'Any',
+                'general': 'General',
+                'programming': 'Programming',
+                'knock-knock': 'Knock-Knock'
+            };
+            return types[type] || 'Any';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function copyJoke() {
+            if (!currentJoke) {
+                alert('Get a joke first!');
+                return;
+            }
+            navigator.clipboard.writeText(currentJoke).then(() => {
+                alert('✅ Joke copied to clipboard!');
+            }).catch(() => {
+                alert('Failed to copy');
+            });
+        }
+
+        function shareJoke() {
+            if (!currentJoke) {
+                alert('Get a joke first!');
+                return;
+            }
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'RiK\'s Joke Generator',
+                    text: currentJoke,
+                    url: window.location.href
+                }).catch(err => console.log('Share error:', err));
+            } else {
+                // Fallback: copy to clipboard
+                copyJoke();
+            }
+        }
+
+        // Load a joke on page load
+        window.addEventListener('load', getJoke);
+    </script>
+</body>
+</html>
